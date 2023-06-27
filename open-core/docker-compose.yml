@@ -34,7 +34,7 @@ services:
 
   graylog:
     hostname: "server"
-    image: "${GRAYLOG_IMAGE:-graylog/graylog:5.0}"
+    image: "${GRAYLOG_IMAGE:-graylog/graylog:5.1}"
     depends_on:
       opensearch:
         condition: "service_started"
