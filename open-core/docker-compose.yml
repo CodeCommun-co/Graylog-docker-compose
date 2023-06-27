@@ -6,6 +6,8 @@ services:
     volumes:
       - "mongodb_data:/data/db"
     restart: "on-failure"
+    networks:
+      - grayback
 
   opensearch:
     image: "opensearchproject/opensearch:2.4.0"
@@ -26,6 +28,9 @@ services:
     volumes:
       - "os_data:/usr/share/opensearch/data"
     restart: "on-failure"
+
+    networks:
+      - grayback
 
   graylog:
     hostname: "server"
@@ -61,6 +66,23 @@ services:
       - "graylog_data:/usr/share/graylog/data/data"
       - "graylog_journal:/usr/share/graylog/data/journal"
     restart: "on-failure"
+
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=frontend
+      - traefik.http.routers.graylog.tls.certresolver=myresolver
+      - traefik.http.routers.graylog.rule=Host(`graylog.de.codecommun.co`)
+      - traefik.http.services.graylog.loadbalancer.server.port=9000
+
+    networks:
+      - frontend
+      - grayback
+
+networks:
+  frontend:
+    external: true
+  grayback:
+    internal: true
 
 volumes:
   mongodb_data:
